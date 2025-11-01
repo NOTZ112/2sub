@@ -97,7 +97,7 @@ async def start_command(client: Client, message: Message):
         # for madflix_msg in madflix_msgs: 
             # try:
                 # await madflix_msg.delete()
-                # await k.edit_text("Your Video / File Is Successfully Deleted ✅") 
+                # await k.edit_text("JOIN -->> @Kambichat_1") 
             # except:    
                 # pass 
 
