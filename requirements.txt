@@ -4,7 +4,7 @@ pyromod
 pymongo
 dnspython
 aiohttp
-
+python-3.12.3
 humanize
 
 
