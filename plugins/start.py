@@ -240,7 +240,7 @@ async def delete_files(messages, client, k):
         except Exception as e:
             print(f"The attempt to delete the media {msg.id} was unsuccessful: {e}")
     # await client.send_message(messages[0].chat.id, "Your Video / File Is Successfully Deleted ✅")
-    await k.edit_text("Your Video / File Is Successfully Deleted ✅")
+    await k.edit_text("https://t.me/MaIlu_xxx")
     
 
 # Jishu Developer 
