@@ -13,9 +13,6 @@ jishudeveloper = madflixofficials
 file_auto_delete = humanize.naturaldelta(jishudeveloper)
 
 
-
-
-
 @Bot.on_message(filters.command('start') & filters.private & subscribed)
 async def start_command(client: Client, message: Message):
     id = message.from_user.id
@@ -61,7 +58,7 @@ async def start_command(client: Client, message: Message):
             return
         await temp_msg.delete()
     
-        madflix_msgs = [] # List to keep track of sent messages
+        madflix_msgs = []
 
         for msg in messages:
 
@@ -77,7 +74,6 @@ async def start_command(client: Client, message: Message):
 
             try:
                 madflix_msg = await msg.copy(chat_id=message.from_user.id, caption = caption, parse_mode = ParseMode.HTML, reply_markup = reply_markup, protect_content=PROTECT_CONTENT)
-                # await asyncio.sleep(0.5)
                 madflix_msgs.append(madflix_msg)
                 
             except FloodWait as e:
@@ -91,15 +87,7 @@ async def start_command(client: Client, message: Message):
 
         k = await client.send_message(chat_id = message.from_user.id, text=f"<b>JOIN @Malluxix {file_auto_delete}")
 
-        # Schedule the file deletion
         asyncio.create_task(delete_files(madflix_msgs, client, k))
-        
-        # for madflix_msg in madflix_msgs: 
-            # try:
-                # await madflix_msg.delete()
-                # await k.edit_text("https://t.me/MaIlu_xxx") 
-            # except:    
-                # pass 
 
         return
     else:
@@ -125,12 +113,7 @@ async def start_command(client: Client, message: Message):
         )
         return
 
-    
 
-
-
-    
-    
 @Bot.on_message(filters.command('start') & filters.private)
 async def not_joined(client: Client, message: Message):
     buttons = [
@@ -170,7 +153,6 @@ async def not_joined(client: Client, message: Message):
     )
 
 
-
 @Bot.on_message(filters.command('users') & filters.private & filters.user(ADMINS))
 async def get_users(client: Bot, message: Message):
     msg = await client.send_message(chat_id=message.chat.id, text=f"Processing...")
@@ -178,36 +160,100 @@ async def get_users(client: Bot, message: Message):
     await msg.edit(f"{len(users)} Users Are Using This Bot")
 
 
+# ==========================================================
+# BROADCAST
+# Button OPTIONAL
+#
+# Normal:
+# /broadcast
+#
+# With Button:
+# /broadcast Button Name | https://t.me/YourChannel
+# ==========================================================
 
 @Bot.on_message(filters.private & filters.command('broadcast') & filters.user(ADMINS))
 async def send_text(client: Bot, message: Message):
     if message.reply_to_message:
+
         query = await full_userbase()
         broadcast_msg = message.reply_to_message
+
+        # Default: No button
+        reply_markup = None
+
+        # Button ഉണ്ടെങ്കിൽ മാത്രം add ചെയ്യും
+        if len(message.command) > 1:
+
+            button_data = message.text.split(" ", 1)[1].strip()
+
+            if "|" in button_data:
+
+                button_text, button_url = button_data.split("|", 1)
+
+                button_text = button_text.strip()
+                button_url = button_url.strip()
+
+                if button_text and button_url:
+
+                    reply_markup = InlineKeyboardMarkup(
+                        [
+                            [
+                                InlineKeyboardButton(
+                                    text=button_text,
+                                    url=button_url
+                                )
+                            ]
+                        ]
+                    )
+
         total = 0
         successful = 0
         blocked = 0
         deleted = 0
         unsuccessful = 0
         
-        pls_wait = await message.reply("<i>Broadcasting Message.. This will Take Some Time</i>")
+        pls_wait = await message.reply(
+            "<i>Broadcasting Message.. This will Take Some Time</i>"
+        )
+
         for chat_id in query:
             try:
-                await broadcast_msg.copy(chat_id)
+
+                # Button ഉണ്ടെങ്കിൽ button സഹിതം
+                # ഇല്ലെങ്കിൽ normal message
+                await broadcast_msg.copy(
+                    chat_id,
+                    reply_markup=reply_markup
+                )
+
                 successful += 1
+
             except FloodWait as e:
+
                 await asyncio.sleep(e.x)
-                await broadcast_msg.copy(chat_id)
+
+                await broadcast_msg.copy(
+                    chat_id,
+                    reply_markup=reply_markup
+                )
+
                 successful += 1
+
             except UserIsBlocked:
+
                 await del_user(chat_id)
                 blocked += 1
+
             except InputUserDeactivated:
+
                 await del_user(chat_id)
                 deleted += 1
+
             except:
+
                 unsuccessful += 1
                 pass
+
             total += 1
         
         status = f"""<b><u>Broadcast Completed</u></b>
@@ -217,31 +263,34 @@ async def send_text(client: Bot, message: Message):
 <b>Blocked Users :</b> <code>{blocked}</code>
 <b>Deleted Accounts :</b> <code>{deleted}</code>
 <b>Unsuccessful :</b> <code>{unsuccessful}</code>"""
-        
+
         return await pls_wait.edit(status)
 
     else:
-        msg = await message.reply(f"Use This Command As A Reply To Any Telegram Message With Out Any Spaces.")
+        msg = await message.reply(
+            f"Use This Command As A Reply To Any Telegram Message With Out Any Spaces."
+        )
         await asyncio.sleep(8)
         await msg.delete()
 
 
-
-
-
-
-
 # Function to handle file deletion
 async def delete_files(messages, client, k):
-    await asyncio.sleep(FILE_AUTO_DELETE)  # Wait for the duration specified in config.py
+    await asyncio.sleep(FILE_AUTO_DELETE)
+
     for msg in messages:
         try:
-            await client.delete_messages(chat_id=msg.chat.id, message_ids=[msg.id])
+            await client.delete_messages(
+                chat_id=msg.chat.id,
+                message_ids=[msg.id]
+            )
         except Exception as e:
-            print(f"The attempt to delete the media {msg.id} was unsuccessful: {e}")
-    # await client.send_message(messages[0].chat.id, "Your Video / File Is Successfully Deleted ✅")
+            print(
+                f"The attempt to delete the media {msg.id} was unsuccessful: {e}"
+            )
+
     await k.edit_text("https://t.me/MaIlu_xxx")
-    
+
 
 # Jishu Developer 
 # Don't Remove Credit 🥺
