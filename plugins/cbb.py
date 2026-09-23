@@ -23,10 +23,10 @@ async def cb_handler(client: Bot, query: CallbackQuery):
         await query.message.edit_text(
             text=f"<b>🤖 My Name :</b> "
                  f"<a href='{bot_link}'>{bot_name}</a>\n"
-                 f"<b>📝 Join :</b> "
-                 f"<a href='https://t.me/kambichat143'>Python 3</a>\n"
+                 f"<b>📝 OUR WEB:</b> "
+                 f"<a href='https://t.me/+zH5uFSZFb1hjMDEx'>HOT 3</a>\n"
                  f"<b>📚 വീഡിയോ :</b> "
-                 f"<a href='https://t.me/Kambichat_1'>Pyrogram {__version__}</a>\n"
+                  f"<a href='https://t.me/+vSoalRuPerMzZGJh'>Spicy{__version__}</a>\n"
                  f"<b>🚀 Video :</b> "
                  f"<a href='https://t.me/MaIlu_xxx'>Heroku</a>\n"
                  f"<b>📢 Channel :</b> "
